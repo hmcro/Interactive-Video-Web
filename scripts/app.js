@@ -27,7 +27,8 @@ var app = new Vue({
 		isSequenceAuto: false,
 		sequenceIndex: 0,
 		ding: null,
-		video: null
+		video: null,
+		message: ''
 	},
 
 	computed: {},
@@ -39,19 +40,12 @@ var app = new Vue({
 			// start playing the video
 			this.video.src = src;
 			var playPromise = this.video.play();
-			var $video = this.playVideo;
 
 			if (playPromise !== undefined) {
 				playPromise.then(function () {
 					// Automatic playback started!
 					console.log('Playback started');
-				}).catch(function (error) {
-					console.error(error);
-					
-					// try again
-					console.log('error: reloading...');
-					setTimeout(() => { location.reload(); }, 2000);
-				});
+				}).catch((error) => this.onVideoError(error));
 			}
 		},
 
@@ -103,7 +97,20 @@ var app = new Vue({
 			}
 		},
 
-		removeVisitor: function () {},
+		removeVisitor: function () {
+			console.log('removeVisitor');
+
+			// remove the last id from the list
+			this.visitors.pop();
+		},
+
+		onVideoClick: function (e) {
+			if (e.altKey) {
+				this.removeVisitor();
+			} else {
+				this.addVisitor();
+			}
+		},
 
 		onVideoEnded: function () {
 			if (this.isSequencePlaying) {
@@ -126,6 +133,17 @@ var app = new Vue({
 			}
 		},
 
+		onVideoError: function (error) {
+			console.error(error);
+			console.log(this);
+
+			// try again
+			this.message = 'There was an error. Reloading...';
+			setTimeout(() => {
+				location.reload();
+			}, 2000);
+		},
+
 		getRandomInt: function (min, max) {
 			min = Math.ceil(min);
 			max = Math.floor(max);
@@ -136,11 +154,11 @@ var app = new Vue({
 	mounted() {
 		window.addEventListener('load', () => {
 			this.ding = new Audio('../assets/audio/91926__corsica-s__ding.wav');
-			this.ding.volume = 0.4;
+			this.ding.volume = 0.3;
 
 			// can't access the video until the page has loaded
 			this.video = document.getElementById('video');
-			
+
 			this.video.addEventListener('ended', this.onVideoEnded);
 			this.playVideo(this.videoList[15]);
 		})
