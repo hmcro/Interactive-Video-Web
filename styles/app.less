@@ -4,8 +4,26 @@
 
 ////////////////////////////////////////////////////////
 
-body {
+html {
 	background-color: #f15a25;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+	width: 0px;
+	background: transparent;
+}
+
+#message {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f15a25;
+	z-index: 999;
 }
 
 #app {
